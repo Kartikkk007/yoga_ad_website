@@ -10,7 +10,7 @@ function App() {
       <Header />
       <main className="pt-16">
         <HeroSection />
-        <div className="bg-gradient-to-b from-green-400 to-white">
+        <div className="bg-gradient-to-b from-red-400 to-white">
           <AboutSection />
           <ProgramsSection />
         </div>
