@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button'; // Shadcn UI Button, path adjusted
 
 // Import carousel images from assets
-import carousel1 from '../assets/carousal1.png'; // Ensure this path is correct
-import carousel2 from '../assets/carousal2.png'; // Ensure this path is correct
-import carousel3 from '../assets/carousal3.png'; // Ensure this path is correct
+import carousel1 from '../assets/carousal1.png';
+import carousel2 from '../assets/carousal2.png';
+import carousel3 from '../assets/carousal3.png';
 
 function HeroSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,22 +26,21 @@ function HeroSection() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2, // Slightly faster stagger
-        delayChildren: 0.5,   // Delay before children start animating
+        staggerChildren: 0.2,
+        delayChildren: 0.5,
       },
     },
   };
-
-  const headlineVariants = {
+  
+  // Variants for a simple slide-in-up animation on text
+  const textSlideUpVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring", // Use spring physics for a subtle bounce
-        damping: 10,
-        stiffness: 100,
         duration: 0.8,
+        ease: 'easeOut',
       },
     },
   };
@@ -64,8 +63,8 @@ function HeroSection() {
       opacity: 1,
       y: 0,
       transition: {
-        staggerChildren: 0.15, // Stagger buttons individually
-        delayChildren: 0.8,    // Delay buttons after text
+        staggerChildren: 0.15,
+        delayChildren: 0.8,
       },
     },
   };
@@ -74,7 +73,6 @@ function HeroSection() {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
-
 
   const handleScrollTo = (id) => {
     const element = document.getElementById(id);
@@ -96,7 +94,7 @@ function HeroSection() {
             src={image}
             alt={`Yoga Carousel ${index + 1}`}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              index === activeIndex ? 'opacity-30' : 'opacity-0' // Low opacity for background effect
+              index === activeIndex ? 'opacity-30' : 'opacity-0'
             }`}
           />
         ))}
@@ -111,12 +109,17 @@ function HeroSection() {
         initial="hidden"
         animate="visible"
       >
+        {/* Static 3D Text Effect */}
         <motion.h1
           className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 drop-shadow-lg"
-          variants={headlineVariants}
+          style={{ 
+            textShadow: '2px 2px 0 #522730, 4px 4px 0 #5e3039, 6px 6px 0 #6e3943, 8px 8px 0 #7e424c'
+          }}
+          variants={textSlideUpVariants}
         >
           Transform Your Life with Yoga by Mansi Sharma
         </motion.h1>
+        
         <motion.p
           className="text-lg md:text-xl mb-8 opacity-90 drop-shadow-md"
           variants={itemVariants}
@@ -140,7 +143,7 @@ function HeroSection() {
           <motion.div variants={buttonVariants}>
             <Button
               className="px-8 py-3 text-lg font-semibold bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
-              onClick={() => window.open('https://wa.me/919876543210', '_blank')} // Replace with Mansi's WhatsApp number
+              onClick={() => window.open('https://wa.me/919876543210', '_blank')}
             >
               Contact Now (WhatsApp)
             </Button>
@@ -148,7 +151,7 @@ function HeroSection() {
           <motion.div variants={buttonVariants}>
             <Button
               className="px-8 py-3 text-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
-              onClick={() => alert('Demo video placeholder. This would open a video modal.')} // Placeholder for video
+              onClick={() => alert('Demo video placeholder. This would open a video modal.')}
             >
               Watch Demo
             </Button>
