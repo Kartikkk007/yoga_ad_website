@@ -1,78 +1,106 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from './ui/table'; // Adjusted path
-import { Button } from './ui/button'; // Adjusted path
-import { Clock, Video, Home } from 'lucide-react'; // Icons for time and location
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Clock, Video, Home } from 'lucide-react';
+import { io } from 'socket.io-client'; // Import socket.io-client
 
 function ScheduleSection() {
   const [scheduleData, setScheduleData] = useState([]);
 
-  useEffect(() => {
-    // Simulate fetching data from a backend API
-    const fetchSchedule = async () => {
-      // Dummy data structured for the new table format
-      const dummyData = [
-        {
-          time: '06:00 AM - 07:00 AM',
-          classes: {
-            Mon: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
-            Tue: { name: 'Vinyasa Flow', location: 'Studio', type: 'Personal' },
-            Wed: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
-            Thu: { name: 'Vinyasa Flow', location: 'Studio', type: 'Personal' },
-            Fri: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
-            Sat: { name: 'Sunrise Yoga', location: 'Studio', type: 'Personal' },
-            Sun: { name: 'Gentle Flow', location: 'Studio', type: 'Personal' },
-          },
-        },
-        {
-          time: '07:30 AM - 08:30 AM',
-          classes: {
-            Mon: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
-            Tue: { name: 'Prenatal Yoga', location: 'Studio', type: 'Special Program' },
-            Wed: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
-            Thu: { name: 'Prenatal Yoga', location: 'Studio', type: 'Special Program' },
-            Fri: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
-            Sat: { name: 'Family Yoga', location: 'Studio', type: 'Special Program' },
-            Sun: { name: 'Meditation', location: 'Studio', type: 'Personal' },
-          },
-        },
-        {
-          time: '06:00 PM - 07:00 PM',
-          classes: {
-            Mon: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
-            Tue: { name: 'Restorative', location: 'Zoom', type: 'Online' },
-            Wed: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
-            Thu: { name: 'Restorative', location: 'Zoom', type: 'Online' },
-            Fri: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
-            Sat: { name: 'Rest', location: 'Rest', type: 'Rest' },
-            Sun: { name: 'Rest', location: 'Rest', type: 'Rest' },
-          },
-        },
-        {
-          time: '07:30 PM - 08:30 PM',
-          classes: {
-            Mon: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
-            Tue: { name: 'Beginner Flow', location: 'Studio', type: 'Personal' },
-            Wed: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
-            Thu: { name: 'Beginner Flow', location: 'Studio', type: 'Personal' },
-            Fri: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
-            Sat: { name: 'Rest', location: 'Rest', type: 'Rest' },
-            Sun: { name: 'Rest', location: 'Rest', type: 'Rest' },
-          },
-        },
-      ];
-      setScheduleData(dummyData);
-    };
+  // Dummy data to display initially
+  const initialDummyData = [
+    {
+      _id: 'dummy1',
+      time: '06:00 AM - 07:00 AM',
+      classes: {
+        Mon: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
+        Tue: { name: 'Vinyasa Flow', location: 'Studio', type: 'Personal' },
+        Wed: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
+        Thu: { name: 'Vinyasa Flow', location: 'Studio', type: 'Personal' },
+        Fri: { name: 'Morning Hatha', location: 'Studio', type: 'Personal' },
+        Sat: { name: 'Sunrise Yoga', location: 'Studio', type: 'Personal' },
+        Sun: { name: 'Gentle Flow', location: 'Studio', type: 'Personal' },
+      },
+    },
+    {
+      _id: 'dummy2',
+      time: '07:30 AM - 08:30 AM',
+      classes: {
+        Mon: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
+        Tue: { name: 'Prenatal Yoga', location: 'Studio', type: 'Special Program' },
+        Wed: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
+        Thu: { name: 'Prenatal Yoga', location: 'Studio', type: 'Special Program' },
+        Fri: { name: 'Power Yoga', location: 'Studio', type: 'Online' },
+        Sat: { name: 'Family Yoga', location: 'Studio', type: 'Special Program' },
+        Sun: { name: 'Meditation', location: 'Studio', type: 'Personal' },
+      },
+    },
+    {
+      _id: 'dummy3',
+      time: '06:00 PM - 07:00 PM',
+      classes: {
+        Mon: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
+        Tue: { name: 'Restorative', location: 'Zoom', type: 'Online' },
+        Wed: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
+        Thu: { name: 'Restorative', location: 'Zoom', type: 'Online' },
+        Fri: { name: 'Evening Flow', location: 'Zoom', type: 'Online' },
+        Sat: { name: 'Rest', location: 'Rest', type: 'Rest' },
+        Sun: { name: 'Rest', location: 'Rest', type: 'Rest' },
+      },
+    },
+    {
+      _id: 'dummy4',
+      time: '07:30 PM - 08:30 PM',
+      classes: {
+        Mon: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
+        Tue: { name: 'Beginner Flow', location: 'Studio', type: 'Personal' },
+        Wed: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
+        Thu: { name: 'Beginner Flow', location: 'Studio', type: 'Personal' },
+        Fri: { name: 'Yin Yoga', location: 'Studio', type: 'Personal' },
+        Sat: { name: 'Rest', location: 'Rest', type: 'Rest' },
+        Sun: { name: 'Rest', location: 'Rest', type: 'Rest' },
+      },
+    },
+  ];
 
+  // Function to fetch schedule data from the backend
+  const fetchSchedule = async () => {
+    try {
+      const response = await fetch('/api/schedule');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      // Only update state if data is not empty, otherwise keep dummy data
+      if (data.length > 0) {
+        setScheduleData(data);
+      } else {
+        setScheduleData(initialDummyData);
+      }
+    } catch (error) {
+      console.error('Failed to fetch schedule data:', error);
+      setScheduleData(initialDummyData);
+    }
+  };
+
+  useEffect(() => {
+    // Initial data fetch
     fetchSchedule();
-  }, []);
+
+    // Connect to the Socket.IO server
+    const socket = io('http://localhost:5000'); // Replace with your server URL
+
+    // Listen for the 'scheduleUpdated' event from the server
+    socket.on('scheduleUpdated', () => {
+      console.log('Schedule updated via WebSocket! Refetching data...');
+      fetchSchedule(); // Re-fetch the data when the event is received
+    });
+
+    // Cleanup function: disconnect the socket when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, []); // Empty dependency array means this effect runs once
 
   const getCardColorClass = (classType) => {
     switch (classType) {
@@ -94,7 +122,7 @@ function ScheduleSection() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
+  
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -107,7 +135,6 @@ function ScheduleSection() {
     },
   };
   
-  // Variants for the 3D heading effect
   const headingVariants = {
     hidden: { opacity: 0 },
     visible: {

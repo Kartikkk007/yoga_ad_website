@@ -67,18 +67,11 @@ function AdminScheduleSection() {
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   useEffect(() => {
-    // Fetch schedule data from the backend on component mount
+    // Simulating a fetch request with a promise and setTimeout
     const fetchSchedule = async () => {
       try {
-        const response = await fetch('/api/schedule');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        // Only update state if data is not empty, otherwise keep dummy data
-        if (data.length > 0) {
-          setScheduleData(data);
-        }
+        const data = await new Promise(resolve => setTimeout(() => resolve(initialDummyData), 500));
+        setScheduleData(data);
       } catch (error) {
         console.error('Failed to fetch schedule data:', error);
         alert('Failed to load schedule data from the backend. Displaying dummy data.');
@@ -119,20 +112,14 @@ function AdminScheduleSection() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      for (const slot of scheduleData) {
-        await fetch(`/api/schedule/${slot._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(slot),
-        });
-      }
-      alert('Schedule updated successfully!');
+      // Temporarily use a simulated save until the backend connection is stable
+      setTimeout(() => {
+        alert('Simulated save successful! The data is updated on the frontend.');
+        setIsSaving(false);
+      }, 1500);
     } catch (error) {
       console.error('Error updating schedule:', error);
       alert('Error updating schedule.');
-    } finally {
       setIsSaving(false);
     }
   };
